@@ -98,12 +98,22 @@
             <div class="mdl-step__content">
       
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                {% if create %}
                 <input class="mdl-textfield__input" type="text" id="id_job_name" name="job_name" placeholder="{{ job_name_ht  }}" value = "{{ job_name  }}">
+                {% else %}
+                <input class="mdl-textfield__input" type="text" id="id_job_name" name="job_name" placeholder="{{
+                    job_name_ht  }}" value = "{{ job_name  }}" disabled>
+                {% endif %}
                 <label class="mdl-textfield__label" for="id_job_name">Job name</label>
               </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                {% if create %}
                 <input class="mdl-textfield__input" type="text" id="id_project_name" name="project_name"
                 placeholder="{{project_name_ht}}" value="{{project_name}}">
+                {% else %}
+                <input class="mdl-textfield__input" type="text" id="id_project_name" name="project_name"
+                placeholder="{{project_name_ht}}" value="{{project_name}}" disabled>
+                {% endif %}
                 <label class="mdl-textfield__label" for="id_project_name">Project Name</label>
               </div>
               <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">

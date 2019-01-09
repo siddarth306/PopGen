@@ -11,6 +11,8 @@ urlpatterns = [
 
     url(r'^(?P<pk>[0-9]+)/$',views.DetailsView.as_view(),name='user_details'),
 
+    url(r'^(?P<pk>[0-9]+)/settings$',views.updateSettings, name='user_settings'),
+
     url(r'^register/$', views.UserFormView.as_view(), name='register'),
 
     url(r'^login/$', auth_views.login,{'template_name': 'JobSchd/login.html'},name='auth_login'),

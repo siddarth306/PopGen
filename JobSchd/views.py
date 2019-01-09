@@ -143,8 +143,8 @@ def updateJobDetails(request, pk):
         groupQuarterEnabled = False
     
     updateJob = JobFinal.objects.get(pk=pk)
-    if not os.path.exists(MEDIA_ROOT + str(request.user) + "/"  + request.POST["job_name"]):
-        os.makedirs(MEDIA_ROOT + str(request.user) + "/"  + request.POST["job_name"])
+    if not os.path.exists(MEDIA_ROOT + str(request.user) + "/"  + updateJob.job_name):
+        os.makedirs(MEDIA_ROOT + str(request.user) + "/"  + updateJob.job_name)
     for k in checkboxValues:
         if k in request.POST:
             exec('updateJob.{KEY} = {VALUE}'.format(KEY = k, VALUE = checkboxOptions[request.POST[k]]))
