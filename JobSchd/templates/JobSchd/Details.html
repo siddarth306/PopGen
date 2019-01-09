@@ -1,0 +1,109 @@
+{% extends 'JobSchd/base.html' %}
+{% block title %}User Job Details{% endblock %}
+{% block popgen-content %}
+
+      {% if error_msg %}
+        <p><strong>{{ error_msg }}</strong></p>
+    {% endif %}
+	
+    <a class="" style="float:right; margin-top:2%;margin-right:2%;text-decoration: none;" href="{% url 'JobSchd:jobform_final' %}" id="create_job">
+    <button class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored mdl-shadow--4dp mdl-color--accent" id="add" data-upgraded=",MaterialButton,MaterialRipple">
+            <i class="material-icons" role="presentation">add</i>
+            <span class="visuallyhidden">Add</span>
+          <span class="mdl-button__ripple-container"><span class="mdl-ripple is-animating" style="width: 160.392px; height: 160.392px; transform: translate(-50%, -50%) translate(22px, 25px);"></span></span></button>
+		  <span style="color: #333333;font-size:20px">Add Job</span></a>
+    <br>
+    <h4 style="margin:0
+     auto;display:flex;max-width:460px;margin-top:2%;font-size:20px;">Jobs Manager</h4>
+        <p style="margin:0
+         auto;display:flex;max-width:460px;;font-size:15px;">You Can Update/Delete and see the Job Status from this Page.</p>
+
+  <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp"
+         style="margin: 0 auto;margin-top: 1%">
+  <thead>
+<thead>
+      <tr>
+        <th class="mdl-data-table__cell--non-numeric">Job Name</th>
+        <th class="mdl-data-table__cell--non-numeric">Actions </th>
+        <th class="mdl-data-table__cell--non-numeric">Job Status Details</th>
+        <th class="mdl-data-table__cell--non-numeric">Output File Download Link</th>
+      </tr>
+    </thead>
+    <tbody>
+     {% for job in user.jobfinal_set.all %}
+      <tr>
+        <td class="mdl-data-table__cell--non-numeric">{{ job.job_name }}</td>
+        <td class="mdl-data-table__cell--non-numeric"><a id="update-job{{ forloop.counter  }}" href="{% url 'JobSchd:jobform_final_update' job.id %}"><i
+        class="material-icons">edit</i></a><div class="mdl-tooltip" data-mdl-for="update-job{{ forloop.counter  }}">
+Update Job
+</div>
+			<a id="delete-job{{ forloop.counter  }}" class="deleteJob" data-jobId='{{job.id}}' href="#">
+                <i class="material-icons">delete</i>
+            </a>
+
+            <div class="mdl-tooltip" data-mdl-for="delete-job{{ forloop.counter  }}"> Delete Job </div>
+</td>
+        <td class="mdl-data-table__cell--non-numeric">    
+                {% if job.job_status == "Completed" %}
+                    Job Run has completed successfully
+                {% elif job.job_status == "In-Progress"%}
+                    Job Run is in progress
+                {% elif job.job_status == "Submitted"%}
+                    Submitted
+                {% elif job.job_status == "Yaml Error"%}
+                    There is an Error in your Input or Input File, Please check your input and submit the job again.
+                {% elif job.job_status == "System Error"%}
+                    There is a system error, we are working on it.
+                {% endif %}
+        </td>
+        <td class="mdl-data-table__cell--non-numeric">
+        {% if job.job_status == "Completed" %}
+            <a href="{{ job.op_file_url }}">Result</a>
+        {% else %}
+            <span>No output file generated yet.</span>
+        {% endif %}
+        </td>
+      </tr>
+     {% endfor %}
+
+    </tbody>
+</table>
+            <div id="delete-toast" class="mdl-js-snackbar mdl-snackbar">
+            <div class="mdl-snackbar__text"></div>
+            <button class="mdl-snackbar__action" type="button"></button>
+                  </div>
+
+{% endblock %}
+
+
+{% block footer %}
+<script>
+$(document).ready(function() {
+    $(".deleteJob").click(function () 
+    {
+       var elem = $(this).parent().parent()
+       $.ajax({
+            url: "/jobform_final/" + $(this).attr("data-jobid") + "/delete/",
+            /*data: {
+              'jobId': $(this).attr("data-jobid") 
+            },*/
+            dataType: 'json',
+            success: function (data) {
+              if (data.is_success) {
+                elem.remove();
+                var resultMessage = "Successfully deleted job";
+              }
+              else {
+                var resultMessage = "Error in deleting job";
+              }
+              var snackbarContainer = document.querySelector('#delete-toast');
+              var showToastButton = document.querySelector($(this).attr('id'));
+              var data = {message: resultMessage};
+              snackbarContainer.MaterialSnackbar.showSnackbar(data);
+            }
+          }); 
+    });
+
+});
+</script>
+{% endblock %}

@@ -1,0 +1,5 @@
+2017/10/11 00:37:24 [info] 24691#24691: *1 client 127.0.0.1 closed keepalive connection
+2017/10/11 00:37:37 [info] 24691#24691: *2 client 127.0.0.1 closed keepalive connection
+2017/10/11 00:38:51 [info] 24691#24691: *4 client timed out (110: Connection timed out) while waiting for request, client: 149.169.80.48, server: 0.0.0.0:80
+2017/10/11 00:39:58 [info] 24788#24788: *2 client closed connection while waiting for request, client: 149.169.80.48, server: 0.0.0.0:80
+2017/10/11 00:39:58 [info] 24788#24788: *3 client closed connection while waiting for request, client: 149.169.80.48, server: 0.0.0.0:80

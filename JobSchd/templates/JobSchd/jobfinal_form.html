@@ -1,0 +1,837 @@
+{% extends 'JobSchd/base.html' %}
+
+{% load static %}
+
+{% block layout %}
+  {{ block.super }}
+  <link rel="stylesheet" href="{% static "JobSchd/css/stepper.min.css" %}" />
+  <style>
+  ::placeholder {
+    color: rgba(0,0,0,.3);
+  }
+
+ .mdl-button--file {
+  input {
+    cursor: pointer;
+    height: 100%;
+    right: 0;
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    width: 300px;
+    z-index: 4;
+  }
+}
+
+.mdl-textfield--file {
+  .mdl-textfield__input {
+    box-sizing: border-box;
+    width: calc(100% - 32px);
+  }
+  .mdl-button--file {
+    right: 0;
+  }
+}
+
+
+  .mdl-textfield-is-disable + label {
+    color: #ddd;
+  }
+
+  ::placeholder {
+    color:#e5e5e5;
+    opacity:1;
+    font-style:italic;
+  }
+
+  ::-ms-input-placeholder { /* Internet Explorer 10-11 */
+      color: #ddd;
+    font-style:italic;
+  }
+
+  ::-ms-input-placeholder { /* Microsoft Edge */
+      color: #ddd;
+    font-style:italic;
+  }
+
+  </style>
+
+{% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<!--Materializecss compiled and minified JavaScript 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.7/js/materialize.min.js"></script>-->
+<!-- jQueryValidation Plugin -->
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.15.0/jquery.validate.min.js"></script>
+  <script src="{% static "JobSchd/js/stepper.min.js" %}"></script>
+
+
+{% endblock %}
+
+{% block popgen-content %}
+<p id="id_error"></p>
+<section class="mdl-stepper-demo">
+ <div class="row">
+ <a class="mdl-navigation__link" href="{% url 'JobSchd:user_details'  user.id%}" style="margin:0
+ auto;display:flex;max-width:1000px;margin-top:2%;font-size:20px;">
+ <i class="material-icons" style="background-color: rgb(0,150,136);
+ color:white;
+  border-radius: 50%;
+   border: 1x solid grey;
+    padding:10px;">navigate_before</i><span style="padding:10px">Jobs Table</span></a>
+
+  <h4 style="margin:0
+     auto;display:flex;max-width:840px;margin-top:2%;font-size:20px;">Create Job</h4>
+     <form action="" method="post" enctype="multipart/form-data" id = "id_form">
+     {% csrf_token %}
+        <ul class="mdl-stepper mdl-stepper--horizontal"  id="demo-stepper-nonlinear"  style="margin:0 auto;
+        min-height:800px;margin-top:1%">
+          <li class="mdl-step" id="0">
+            <span class="mdl-step__label">
+              <span class="mdl-step__title">
+                <span class="mdl-step__title-text">General</span>
+              </span>
+            </span>
+            <div class="mdl-step__content">
+      
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_job_name" name="job_name" placeholder="{{ job_name_ht  }}" value = "{{ job_name  }}">
+                <label class="mdl-textfield__label" for="id_job_name">Job name</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_project_name" name="project_name"
+                placeholder="{{project_name_ht}}" value="{{project_name}}">
+                <label class="mdl-textfield__label" for="id_project_name">Project Name</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="id_groupquarter">
+                  {% if geo == "" %}
+                  <input type="checkbox" id="id_groupquarter" name="groupquarter" class="mdl-switch__input"
+                  onclick="enableDisableGroupquarters();">
+                  {% else %}
+                  <input type="checkbox" id="id_groupquarter" name="groupquarter" class="mdl-switch__input"
+                  onclick="enableDisableGroupquarters();"  checked>
+                  {% endif %}
+                  <span class="mdl-switch__label">Enable Groupquarters</span>
+                </label>
+              </div>
+              <br/>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_hid" name="hid"  placeholder="{{ hid_ht }}" value="{{ hid }}">
+                <label class="mdl-textfield__label" for="id_hid">Household Entity Name</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_pid" name="pid"  placeholder="{{pid_ht}}"
+                value="{{pid}}">
+                <label class="mdl-textfield__label" for="id_pid">Person Entity Name</label>
+              </div>
+              <div class="mdl-textfield  mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_groupquarter_geo" name="geo" placeholder="{{geo_ht}}"
+                value="{{geo}}">
+                <label class="mdl-textfield__label" for="id_geo">Groupquarters Enitity Name</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_region" name="region"  placeholder="{{region_ht}}" value="{{region}}">
+                <label class="mdl-textfield__label" for="id_region">Aggregate Spatial Unit</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_sample_geo" name="sample_geo"  placeholder="{{sample_geo_ht}}"
+                value="{{sample_geo}}">
+                <label class="mdl-textfield__label" for="id_sample_geo">Disaggregate Spatial Unit</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_entities" name="entities" placeholder="{{entities_ht}}" value="{{entities}}">
+                <label class="mdl-textfield__label" for="id_entities">Entities</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_housing_entities" name="housing_entities"
+                placeholder="{{housing_entities_ht}}" value="{{housing_entities}}">
+                <label class="mdl-textfield__label" for="id_housing_entities">Housing Entities</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_person_entities" name="person_entities"
+                placeholder="{{person_entities_ht}}"
+                value="{{person_entities}}">
+                <label class="mdl-textfield__label" for="id_person_entities">Person Entities</label>
+              </div>
+              <h6>IPF Parameters</h6>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_ipf_tolderance" name="ipf_tolerance" placeholder="{{ipf_tolerance_ht}}"
+                value="{{ipf_tolerance}}">
+                <label class="mdl-textfield__label" for="id_ipf_tolerance">Tolerance</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_rp" name="rp" placeholder="{{rp_ht}}" value="{{rp}}">
+                <label class="mdl-textfield__label" for="id_rp">Rounding Procedure</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_zmc" name="zmc" placeholder="{{zmc_ht}}" value="{{zmc}}">
+                <label class="mdl-textfield__label" for="id_zmc">Zero Marginal Correction</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_iterations" name="iterations" placeholder="{{iterations_ht}}"
+                value="{{iterations}}">
+                <label class="mdl-textfield__label" for="id_iterations">Iterations</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_apf" name="apf" placeholder="{{apf_ht}}" value="{{apf}}">
+                <label class="mdl-textfield__label" for="id_apf">Archive Performance Procedure</label>
+              </div>
+              <h6>Reweighting Paramters</h6>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_rew_tolerance" name="rew_tolerance" placeholder="{{rew_tolerance_ht}}"
+                value="{{rew_tolerance}}">
+                <label class="mdl-textfield__label" for="id_rew_tolerance">Tolerance</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                  <input class="mdl-textfield__input" type="text" id="id_procedure" name="procedure" placeholder="{{procedure_ht}}"
+                  value="{{procedure}}">
+                <label class="mdl-textfield__label" for="id_procedure">Procedure</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_inner_iterations" name="inner_iterations" placeholder="{{inner_iterations_ht}}"
+                value="{{inner_iterations}}">
+                <label class="mdl-textfield__label" for="job_entities">Inner Iterations</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_outer_iterations" name="outer_iterations" placeholder="{{outer_iterations_ht}}"
+                value="{{outer_iterations}}">
+                <label class="mdl-textfield__label" for="id_outer_iterations">Outer Iterations</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_rapf" name="rapf" placeholder="{{rapf_ht}}" value="{{rapf}}">
+                <label class="mdl-textfield__label" for="id_rapf">Archive Performance Frequency</label>
+              </div>
+              <h6>Draws Paramters</h6>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_pvalue_tolerance" name="pvalue_tolerance" placeholder="{{pvalue_tolerance_ht}}"
+                value="{{pvalue_tolerance}}">
+                <label class="mdl-textfield__label" for="id_pvalue_tolerance">Pvalue Tolerance</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_draws_iterations" name="draws_iterations" placeholder="{{draws_iterations_ht}}"
+                value="{{draws_iterations}}">
+                <label class="mdl-textfield__label" for="id_draws_iterations">Iterations</label>
+              </div>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_seed" name="seed" placeholder="{{seed_ht}}" value="{{seed}}">
+                <label class="mdl-textfield__label" for="id_seed">Seed</label>
+              </div>
+              <h6>Geos to Synthesize</h6>
+              <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <input class="mdl-textfield__input" type="text" id="id_region_ids" name="region_ids" placeholder="{{region_ids_ht}}"
+                value="{{region_ids}}">
+                <label class="mdl-textfield__label" for="id_region_ids">Region Ids</label>
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="id_region_all_ids">
+                  {% if region_all_ids  == 'True' %}
+                  <input type="checkbox" id="id_region_all_ids" name="region_all_ids" class="mdl-switch__input" checked>
+                  {% else %}
+                  <input type="checkbox" id="id_region_all_ids" name="region_all_ids" class="mdl-switch__input" >
+                  {% endif %}
+                  <span class="mdl-switch__label">All Region Ids</span>
+                </label>
+              </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_geo_ids" name="geo_ids" placeholder="{{geo_ids_ht}}" value="{{geo_ids}}">
+              <label class="mdl-textfield__label" for="id_geo_ids">Geo Ids</label>
+              <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="id_geo_all_ids">
+              {% if geo_all_ids == 'True' %}
+              <input type="checkbox" id="id_geo_all_ids" name="geo_all_ids" class="mdl-switch__input" checked>
+              {% else %}
+              <input type="checkbox" id="id_geo_all_ids" name="geo_all_ids" class="mdl-switch__input">
+              {% endif %}
+              <span class="mdl-switch__label">All Geo Ids</span>
+            </label>
+            </div>
+            <h6>Output</h6>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_performance" name="performance" placeholder="{{performance_ht}}"
+              value="{{performance}}">
+              <label class="mdl-textfield__label" for="id_performance">Performance</label>
+            </div>
+            <!--<p class="mdc-text-field-helper-text mdc-text-field-helper-text--persistent
+            mdc-text-field-helper-text--validation-msg" id="pw-validation-msg">Helper Text</p>-->
+        	  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="id_export"
+                style="padding-bottom:30px">
+                  {% if export == 'True'%}
+                    <input type="checkbox" id="id_export" name="export" class="mdl-switch__input" checked>
+                  {% else %}
+                    <input type="checkbox" id="id_export" name="export" class="mdl-switch__input">
+                  {% endif %}
+                  <span class="mdl-switch__label">Export Weights</span>
+                </label>
+                <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="id_collate_across_geos">
+                  {% if collate_across_geos == 'True'%}
+                    <input type="checkbox" id="id_collate_across_geos" name="collate_across_geos" class="mdl-switch__input" checked>
+                  {% else %}
+                    <input type="checkbox" id="id_collate_across_geos" name="collate_across_geos" class="mdl-switch__input">
+                  {% endif %}
+                  <span class="mdl-switch__label">Collate Weights Across Geos</span>
+                </label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_multiway_variables_one" name="multiway_variables_one"
+              placeholder="{{multiway_variables_one_ht}}" value="{{multiway_variables_one}}">
+              <label class="mdl-textfield__label" for="id_multiway_variables_one">Multiway Variables</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_filename_one" name="filename_one" placeholder="{{filename_one_ht}}"
+              value="{{filename_one}}">
+              <label class="mdl-textfield__label" for="id_filename_one">Filename</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_filetype_one" name="filetype_one" placeholder="{{filetype_one_ht}}"
+              value="{{filetype_one}}">
+              <label class="mdl-textfield__label" for="id_filetype_one">Filetype</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_entity_one" name="entity_one" placeholder="{{entity_one_ht}}"
+              value="{{entity_one}}">
+              <label class="mdl-textfield__label" for="id_entity_one">Entity</label>
+            </div>
+        	  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_multiway_variables_two" name="multiway_variables_two"
+              placeholder="{{multiway_variables_two_ht}}" value="{{multiway_variables_two}}">
+              <label class="mdl-textfield__label" for="id_multiway_variables_two">Multiway Variables</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_filename_two" name="filename_two" placeholder="{{filename_two_ht}}"
+              value="{{filename_two}}">
+              <label class="mdl-textfield__label" for="id_filename_two">Filename</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_filetype_two" name="filetype_two" placeholder="{{filetype_two_ht}}"
+              value="{{filetype_two}}">
+              <label class="mdl-textfield__label" for="id_filetype_two">Filetype</label>
+            </div>
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+              <input class="mdl-textfield__input" type="text" id="id_entity_two" name="entity_two" placeholder="{{entity_two_ht}}"
+              value="{{entity_two}}">
+              <label class="mdl-textfield__label" for="id_entity_two">Entity</label>
+            </div>
+          </div>
+    <div class="mdl-step__actions">
+      <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" data-stepper-next>
+            Continue
+          </button>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-cancel>
+            Cancel
+          </button>
+	 <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-back disabled>
+            Back
+          </button>
+    </div>
+  </li>
+  <li class="mdl-step" id="1">
+    <span class="mdl-step__label">
+          <span class="mdl-step__title">
+        <span class="mdl-step__title-text">Correspondence <br> Files</span>
+    </span>
+    </span>
+    <div class="mdl-step__content">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Geo To Sample File" type="text" id="id_geo_to_sample_txt"
+        value="{{geo_to_sample}}" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_geo_to_sample" name="geo_to_sample"
+          style="opacity:0" name="geo_to_sample"/>
+        </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Region To Sample File" type="text" id="id_region_to_sample_txt"
+        name="" value="{{region_to_sample}}" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_region_to_sample" name="region_to_sample"
+          style="opacity:0" name="region_to_sample"/>
+        </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Region to Geo File" type="text" id="id_region_to_geo_txt"
+        style="width: calc(100% - 32px);" value="{{region_to_geo}}" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_region_to_geo" name="region_to_geo"
+          style="opacity:0" name="region_to_geo"/>
+        </div>
+      </div>
+	  <style>
+	  </style>
+    </div>
+    <div class="mdl-step__actions">
+      <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" data-stepper-next>
+            Continue
+          </button>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-cancel>
+            Cancel
+          </button>
+	  <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-back>
+            Back
+          </button>
+    </div>
+  </li>
+  <li class="mdl-step" id="2">
+    <span class="mdl-step__label">
+          <span class="mdl-step__title">
+            <span class="mdl-step__title-text">Control Variables<br> (Region)</span>
+    </span>
+    </span>
+    <div class="mdl-step__content">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="id_desc" name="desc" placeholder="{{desc_ht}}"
+        value="{{desc}}">
+        <label class="mdl-textfield__label" for="id_desc">Scenario Description</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect" for="id_arc">
+        {% if arc == 'True'%}
+        <input type="checkbox" id="id_arc" name="arc" class="mdl-switch__input" checked>
+        {% else %}
+        <input type="checkbox" id="id_arc" name="arc" class="mdl-switch__input">
+        {% endif %}
+        <span class="mdl-switch__label">Scenario Apply Region Controls</span>
+      </label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="id_region_household" name="region_household"
+        placeholder="{{region_household_ht}}" value="{{region_household}}">
+        <label class="mdl-textfield__label" for="id_region_household">Household</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+          <input class="mdl-textfield__input" placeholder="Household File" type="text"
+          id="id_region_household_files_txt" style="width: calc(100% - 32px);" value="{{region_household_files}}" readonly/>
+          <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+            <i class="material-icons" >attach_file</i><input type="file" id="id_region_household_files"
+            style="opacity:0" name="region_household_files"/>
+          </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="id_region_person" name="region_person" placeholder="{{region_person_ht}}" value="{{region_person}}">
+        <label class="mdl-textfield__label" for="id_region_person">Person</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Person File" type="text" id="id_region_person_files_txt"
+        value="{{region_person_files}}" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_region_person_files" style="opacity:0"
+          name="region_person_files"/>
+        </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="id_region_groupquarter" name="region_groupquarter"
+        placeholder="{{region_groupquarter_ht}}" value="{{region_groupquarter}}">
+        <label class="mdl-textfield__label" for="id_region_groupquarter">Groupquarter</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Grouquarter File" type="text"
+        id="id_region_groupquarter_files_txt" value="{{region_groupquarter_files}}" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_region_groupquarter_files"
+          style="opacity:0" name="region_groupquarter_files"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="mdl-step__actions">
+      <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" data-stepper-next>
+            Continue
+          </button>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-cancel>
+            Cancel
+          </button>
+	  <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-back>
+            Back
+          </button>
+    </div>
+  </li>
+  <li class="mdl-step" id="3">
+    <span class="mdl-step__label">
+          <span class="mdl-step__title">
+            <span class="mdl-step__title-text">Control Variables<br> (Geo)</span>
+    </span>
+    </span>
+    <div class="mdl-step__content">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="id_geo_household" name="geo_household" placeholder="{{geo_household_ht}}" value="{{geo_household}}">
+        <label class="mdl-textfield__label" for="id_geo_household">Household</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" placeholder="Household File" type="text" id="id_geo_household_files_txt"
+        style="width: calc(100% - 32px);" value="{{geo_household_files}}" readonly/>
+        <label class="mdl-textfield__label" for="id_geo_household_files_txt">Household File</label>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_geo_household_files" style="opacity:0"
+          name="geo_household_files"/>
+        </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="id_geo_person" name="geo_person" placeholder="{{geo_person_ht}}" value="{{geo_person}}">
+        <label class="mdl-textfield__label" for="id_geo_person">Person</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" placeholder="Person File" type="text" id="id_geo_person_files_txt"
+        value="{{geo_person_files}}" readonly/>
+        <label class="mdl-textfield__label" for="id_geo_person_files_txt">Person File</label>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_geo_person_files" style="opacity:0"
+          name="geo_person_files"/>
+        </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="id_geo_groupquarter" name="geo_groupquarter"
+        placeholder="{{geo_groupquarter_ht}}" value="{{geo_groupquarter}}">
+        <label class="mdl-textfield__label" for="id_geo_groupquarter">Groupquarter</label>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" placeholder="Groupquarter File" type="text"
+        id="id_geo_groupquarter_files_txt" value="{{geo_groupquarter_files}}" readonly/>
+        <label class="mdl-textfield__label" for="id_geo_groupquarter_files_txt">Groupquarter File</label>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_geo_groupquarter_files"
+          style="opacity:0" name="geo_groupquarter_files"/>
+        </div>
+      </div>
+    </div>
+
+    <div class="mdl-step__actions">
+      <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised" data-stepper-next>
+            Continue
+          </button>
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-cancel>
+            Cancel
+          </button>
+	  <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-back>
+            Back
+          </button>
+    </div>
+  </li>
+  <li class="mdl-step" id="4">
+    <span class="mdl-step__label">
+          <span class="mdl-step__title">
+            <span class="mdl-step__title-text">Sample Files</span>
+    </span>
+    </span>
+    <div class="mdl-step__content">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Household File" type="text" id="id_sample_household_txt"
+        style="width: calc(100% - 32px);" value="{{sample_household}}" onchange="checkEmpty(this.value)" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_sample_household" style="opacity:0"
+          name="sample_household"/>
+        </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Person File" type="text" id="id_sample_person_txt"
+        value="{{sample_person}}" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_sample_person" style="opacity:0"
+          name="sample_person"/>
+        </div>
+      </div>
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--file">
+        <input class="mdl-textfield__input" placeholder="Groupquarter File" type="text"
+        id="id_sample_groupquarter_txt" value="{{sample_groupquarter}}" readonly/>
+        <div class="mdl-button mdl-button--primary mdl-button--icon mdl-button--file" style="right:0px">
+          <i class="material-icons" >attach_file</i><input type="file" id="id_sample_groupquarter" style="opacity:0"
+          name="sample_groupquarter"/>
+        </div>
+      </div>
+    </div>
+    <div class="mdl-step__actions">
+      <button type="button" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--colored mdl-button--raised"
+      data-stepper-next onclick="submitForm()" id="finishFormBtn" style="float:right">
+      Finish
+      </button>
+      <div id="demo-toast-example" class="mdl-js-snackbar mdl-snackbar">
+        <div class="mdl-snackbar__text"></div>
+        <button class="mdl-snackbar__action" type="button"></button>
+      </div>    
+      <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-cancel>
+            Cancel
+          </button>
+	  <button class="mdl-button mdl-js-button mdl-js-ripple-effect" data-stepper-back>
+            Back
+          </button>
+    </div>
+    </li>
+</ul>
+</form>
+</div>
+<!-- script -->
+<script>
+  function checkEmpty(val) {
+      if (val == "") {
+          this.classList.add("is-invalid");
+      } else {
+          this.classList.remove("is-invalid");
+      }
+  }
+  componentHandler.upgradeAllRegistered();
+  (function () {
+    var selector = '.mdl-stepper#demo-stepper-nonlinear';
+    // Select stepper container element      
+    var stepperElement = document.querySelector(selector);
+    var Stepper;
+    var steps;
+    
+    if (!stepperElement) return;
+    
+    // Get the MaterialStepper instance of element to control it.          
+    Stepper = stepperElement.MaterialStepper;
+    
+    if (!Stepper) {
+      console.error('MaterialStepper instance is not available for selector: ' + selector + '.');
+      return;
+    }
+    steps = stepperElement.querySelectorAll('.mdl-step');
+    for (var i = 0; i < steps.length; i++) {
+      // When user clicks on [data-stepper-next] button of step.          
+      steps[i].addEventListener('onstepnext', function (e) {
+        // {element}.MaterialStepper.next() change the state of current step to "completed" 
+        // and move one step forward.        
+        Stepper.next();              
+      });
+      // When user clicks on [data-stepper-back] button of step.          
+      steps[i].addEventListener('onstepback', function (e) {
+        Stepper.back();              
+      });
+    }
+    // When all steps are completed this event is dispatched.          
+    stepperElement.addEventListener('onsteppercomplete', function (e) {
+      var toast = document.querySelector('#snackbar-stepper-complete');
+      if (!toast) return;
+      toast.MaterialSnackbar.showSnackbar({
+        message: 'Stepper non-linear are completed',
+        timeout: 4000,
+        actionText: 'Ok'
+      });
+    });
+  })();
+  /*
+  (function () {
+    var toggle = document.querySelector('[href="#stepper-nonlinear-toggle"]');
+    var snippetDirections = document.querySelector('#snippet-stepper-nonlinear');
+    var stepperElement = snippetDirections.querySelector('.mdl-stepper');
+    var cssClassHorizontal = 'mdl-stepper--horizontal';
+    toggle.addEventListener('click', function (event) {
+      event.preventDefault();
+      
+      if (!stepperElement) return;
+      if (stepperElement.classList.contains(cssClassHorizontal)) {
+        stepperElement.classList.remove(cssClassHorizontal);
+      } else {
+        stepperElement.classList.add(cssClassHorizontal);        
+      }
+    });
+  })();*/
+</script>
+</section>
+    <!--<div class="container-fluid">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <h3>Create/Update a Job</h3>
+
+                        <h5>** We are still in our Alpha Stage and will be improving our System, Please fill the form very carefully.</h5>
+                        <p>Refer this <a href="{%  static 'Example_Input_Data_For_Popgen.zip' %}"> link </a> to get an example of the Configuration Yaml and other related files.</p>
+                    <form action="" method="post" enctype="multipart/form-data">
+                        {% block content %}
+                           {% csrf_token %}
+                           <input type="submit" value="Submit" />
+                        {% endblock content %}
+                    </form>
+                    </div>
+                </div>
+    </div>-->
+
+{% endblock %}
+
+
+{% block footer %}
+<script>
+document.getElementById("id_geo_to_sample").onchange = function () {
+        document.getElementById("id_geo_to_sample_txt").value = this.files[0].name;
+};
+document.getElementById("id_region_to_sample").onchange = function () {
+        document.getElementById("id_region_to_sample_txt").value = this.files[0].name;
+};
+document.getElementById("id_region_to_geo").onchange = function () {
+        document.getElementById("id_region_to_geo_txt").value = this.files[0].name;
+};
+document.getElementById("id_sample_household").onchange = function () {
+        document.getElementById("id_sample_household_txt").value = this.files[0].name;
+};
+document.getElementById("id_sample_person").onchange = function () {
+        document.getElementById("id_sample_person_txt").value = this.files[0].name;
+};
+document.getElementById("id_sample_person").onchange = function () {
+        document.getElementById("id_sample_person_txt").value = this.files[0].name;
+};
+document.getElementById("id_sample_groupquarter").onchange = function () {
+        document.getElementById("id_sample_groupquarter_txt").value = this.files[0].name;
+};
+document.getElementById("id_region_household_files").onchange = function () {
+        document.getElementById("id_region_household_files_txt").value = this.files[0].name;
+};
+document.getElementById("id_region_person_files").onchange = function () {
+        document.getElementById("id_region_person_files_txt").value = this.files[0].name;
+};
+document.getElementById("id_region_groupquarter_files").onchange = function () {
+        document.getElementById("id_region_groupquarter_files_txt").value = this.files[0].name;
+};
+document.getElementById("id_geo_household_files").onchange = function () {
+        document.getElementById("id_geo_household_files_txt").value = this.files[0].name;
+};
+document.getElementById("id_geo_person_files").onchange = function () {
+        document.getElementById("id_geo_person_files_txt").value = this.files[0].name;
+};
+document.getElementById("id_geo_groupquarter_files").onchange = function () {
+        document.getElementById("id_geo_groupquarter_files_txt").value = this.files[0].name;
+};
+
+function enableDisableGroupquarters() {
+    if (document.getElementById('id_groupquarter').checked) 
+    {
+       document.getElementById('id_groupquarter_geo').disabled = false;
+       document.getElementById('id_groupquarter_geo').setAttribute("style", "color:");
+       document.getElementById('id_groupquarter_geo').nextElementSibling.setAttribute("style", "color:");
+       document.getElementById('id_geo_groupquarter_files').disabled = false;
+       document.getElementById('id_geo_groupquarter_files').previousElementSibling.setAttribute("style", "color:");
+       document.getElementById('id_geo_groupquarter_files_txt').disabled = false;
+       document.getElementById('id_geo_groupquarter_files_txt').setAttribute("style", "color:");
+       //document.getElementById('id_geo_groupquarter_files_txt').previousElementSibling.setAttribute("style", "color:");
+       document.getElementById('id_sample_groupquarter').disabled = false;
+       document.getElementById('id_sample_groupquarter').previousElementSibling.setAttribute("style", "color:");
+       document.getElementById('id_sample_groupquarter_txt').disabled = false;
+       document.getElementById('id_sample_groupquarter_txt').setAttribute("style", "color:");
+       //document.getElementById('id_sample_groupquarter_txt').previousElementSibling.setAttribute("style", "color:");
+       document.getElementById('id_region_groupquarter_files').disabled = false;
+       document.getElementById('id_region_groupquarter_files').previousElementSibling.setAttribute("style", "color:");
+       document.getElementById('id_region_groupquarter_files_txt').disabled = false;
+       document.getElementById('id_region_groupquarter_files_txt').setAttribute("style", "color:");
+       document.getElementById('id_geo_groupquarter').disabled = false;
+       document.getElementById('id_geo_groupquarter').setAttribute("style", "color:");
+       document.getElementById('id_geo_groupquarter').nextElementSibling.setAttribute("style", "color:");
+       document.getElementById('id_region_groupquarter').disabled = false;
+       document.getElementById('id_region_groupquarter').setAttribute("style", "color:");
+       document.getElementById('id_region_groupquarter').nextElementSibling.setAttribute("style", "color:");
+    }
+    else {
+       document.getElementById('id_groupquarter_geo').disabled = true;
+       document.getElementById('id_groupquarter_geo').setAttribute("style", "color:#ddd");
+       document.getElementById('id_groupquarter_geo').nextElementSibling.setAttribute("style", "color:#ddd");
+       document.getElementById('id_geo_groupquarter_files').disabled = true;
+       document.getElementById('id_geo_groupquarter_files').previousElementSibling.setAttribute("style", "color:#ddd");
+       document.getElementById('id_geo_groupquarter_files_txt').disabled = true;
+       document.getElementById('id_geo_groupquarter_files_txt').setAttribute("style", "color:#ddd;text-color:#ddd");
+       document.getElementById('id_geo_groupquarter_files_txt').nextElementSibling.setAttribute("style", "color:#ddd");
+       document.getElementById('id_sample_groupquarter').disabled = true;
+       document.getElementById('id_sample_groupquarter').previousElementSibling.setAttribute("style", "color:#ddd");
+       document.getElementById('id_sample_groupquarter_txt').disabled = true;
+       document.getElementById('id_sample_groupquarter_txt').setAttribute("style", "color:#ddd");
+       document.getElementById('id_region_groupquarter_files').disabled = true;
+       document.getElementById('id_region_groupquarter_files').previousElementSibling.setAttribute("style", "color:#ddd");
+       document.getElementById('id_region_groupquarter_files_txt').disabled = true;
+       document.getElementById('id_region_groupquarter_files_txt').setAttribute("style", "color:#ddd");
+       document.getElementById('id_geo_groupquarter').disabled = true;
+       document.getElementById('id_geo_groupquarter').setAttribute("style", "color:#ddd");
+       document.getElementById('id_geo_groupquarter').nextElementSibling.setAttribute("style", "color:#ddd");
+       document.getElementById('id_region_groupquarter').disabled = true;
+       document.getElementById('id_region_groupquarter').nextElementSibling.setAttribute("style", "color:#ddd");
+       document.getElementById('id_region_groupquarter').setAttribute("style", "color:#ddd");
+    }
+}
+enableDisableGroupquarters();
+
+function validateAndRun() 
+{
+    //var errors = []
+    var groupQuarterEnabled = false;
+    if (document.getElementById("id_groupquarter").checked) {
+        groupQuarterEnabled = true;
+    }
+
+    var stepStatus = [0,0,0,0,0];
+    var noerrors = true;
+    form_elements = document.getElementsByClassName("mdl-textfield__input")
+    for (var i = 0; i < form_elements.length; i++) {
+        var elemObject = form_elements[i];
+        if (groupQuarterEnabled || !elemObject.id.includes("groupquarter")){
+            if (elemObject.value == "") {
+                /*elemVal = elemObject.parentNode.getElementsByTagName('label')
+                if (elemVal == []) {
+                    errors.push(elemObject.placeholder);
+                } else
+                errors.push(elemVal[0].innerHTML);*/
+                //elemObject.required = true;
+                elemObject.parentElement.classList.add("is-invalid");
+                stepStatus[parseInt(elemObject.parentElement.parentElement.parentElement.id)] = 1;
+                noerrors = false;
+				var parent = elemObject.parentElement.parentElement.parentElement;
+				parent.classList.remove("mdl-step--completed");
+				parent.classList.add("mdl-step--error");
+				//parent.getElementsByTagName("span")[0].getElementsByTagName("span")[2].getElementsByTagName("i")[0].innerHTML = "!";
+            }
+            else {
+               //elemObject.required = false;
+            }
+        }
+    }
+
+    /*stepElements = document.getElementsByClassName("mdl-step");
+    for (var i = 0; i < stepElements.length; i++) {
+        if(stepStatus[i] == 0) {
+            stepElements.classList.remove("mdl-step--error");
+            stepElements.classList.remove("mdl-step--completed");
+        }
+    }
+    
+    var selector = '.mdl-stepper#demo-stepper-nonlinear';
+    var stepperElement = document.querySelector(selector);
+    if (!stepperElement) return;
+
+    Stepper = stepperElement.MaterialStepper;
+    
+    if (!Stepper) {
+      console.error('MaterialStepper instance is not available for selector: ' + selector + '.');
+      return;
+    }
+
+	steps = stepperElement.querySelectorAll('.mdl-step');
+	for (var i = 0; i < steps.length; i++) {
+    	if(stepStatus[i] == 1) {
+			Stepper.error('Invalid fields');
+		}
+	}*/
+    return noerrors;
+}
+
+function submitForm() {
+    var result = validateAndRun();
+    if (!result) {
+        document.getElementById("id_error").innerHTML = "Error in form";
+    }
+    else {
+        if (!document.getElementById("id_groupquarter").checked) {
+            document.getElementById("id_groupquarter_geo").value = "";
+        }
+        document.getElementById("id_form").submit();
+    }
+    
+    var resultmessage = '';
+    if( result == true) {
+        resultMessage = 'Submitting form...';
+    }
+    else {
+        resultMessage = 'Please correct errors in the form';
+    }
+    var snackbarContainer = document.querySelector('#demo-toast-example');
+    var showToastButton = document.querySelector('#finishFormBtn');
+      var data = {message: resultMessage};
+      snackbarContainer.MaterialSnackbar.showSnackbar(data);
+ 
+
+}
+</script>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends 'JobSchd/base.html' %}
+
+
+{% load static %}
+{% block layout %}
+  {{ block.super }}
+  <style>
+    .demo-card-wide.mdl-card {
+  width: 500px;
+}
+.demo-card-wide > .mdl-card__title {
+  color: #333;
+  height: 300px;
+  background: url('{% static "JobSchd/imgs/popgen-infographic.png"  %}') center / cover;
+}
+.demo-card-wide > .mdl-card__menu {
+  color: #333;
+}
+
+.demo-card-event2.mdl-card2 {
+  width: 256px;
+  //height: 256px;
+  background: rgb(0,150,136);
+}
+.demo-card-event2 > .mdl-card__actions {
+  border-color: rgba(255, 255, 255, 0.2);
+}
+.demo-card-event2 > .mdl-card__title {
+  align-items: flex-start;
+}
+.demo-card-event2 > .mdl-card__title > h4 {
+  margin-top: 0;
+}
+.demo-card-event2 > .mdl-card__actions {
+  display: flex;
+  box-sizing:border-box;
+  align-items: center;
+}
+.demo-card-event2 > .mdl-card__actions > .material-icons {
+  padding-right: 10px;
+}
+.demo-card-event2 > .mdl-card__title,
+.demo-card-event2 > .mdl-card__actions,
+.demo-card-event2 > .mdl-card__actions > .mdl-button {
+  color: #fff;
+}
+  </style>
+
+{% endblock %}
+
+{% block javascript %}
+  {{ block.super }}
+{% endblock %}
+
+{% block popgen-content %}
+<div class="mdl-grid" style="max-width:1200px">
+  <div class="mdl-cell mdl-cell--6-col">
+    <div class="demo-card-wide mdl-card mdl-shadow--2dp" style="margin:10% auto; margin-top: 2%;">
+      <div class="mdl-card__title">
+        <h2 class="mdl-card__title-text">Welcome to <br>Synthetic Population Generator</h2>
+      </div>
+      <div class="mdl-card__supporting-text">
+        PopGen is capable of synthesizing populations whose attribute distributions closely match those of the general population as documented in the census. The Mobility Analytics Research Group is working on the next generation of PopGen, which will incorporate full population evolution and socio-economic dynamics to evolve the population over time.
+      </div>
+        {% if user.is_authenticated %}
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+		   href="{% url 'JobSchd:user_details'  user.id%}">
+          View Job Manager
+        </a>
+      </div>
+	{% else %}
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect"
+		   href="{% url 'JobSchd:auth_login' %}">
+         Login to you account 
+        </a>
+      </div>
+
+    {% endif %}
+      <div class="mdl-card__menu">
+        <button class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" >
+          <i class="material-icons">share</i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+        {% if user.is_authenticated %}
+  <div class="mdl-layout-spacer"></div>
+  <div class="mdl-cell mdl-cell--6-col">
+    <div class="demo-card-event2 mdl-card2 mdl-shadow--2dp">
+  <div class="mdl-card__title mdl-card--expand">
+    <h4>
+      Update:<br>
+      PopGen has been updated to version 2.0<br>
+    </h4>
+  </div>
+  <!--<div class="mdl-card__actions mdl-card--border">
+    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+      Add to Calendar
+    </a>
+    <i class="material-icons">event</i>
+  </div>-->
+</div>
+  <div class="demo-card-event2 mdl-card2 mdl-shadow--2dp" style="margin-top:5%;">
+  <div class="mdl-card__title mdl-card--expand">
+    <h4>
+      Documentation:<br>
+      Updated: <br>
+      May 24, 2016<br>
+    </h4>
+  </div>
+  <div class="mdl-card__actions mdl-card--border">
+    <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+      Download File
+    <i class="material-icons">save_alt</i>
+    </a>
+  </div>
+</div>
+
+    {% endif %}
+  </div>
+</div>
+{% comment %}
+{% if object_list %}
+        <div class="container">
+        {% if user.is_authenticated %}
+        <h3>Welcome! {{ user.first_name }} {{ user.last_name }}</h3>
+        <ul>
+        {% if user.jobfinal_set.all.count > 0 %}
+                  <h4>Here are all your Jobs</h4>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        <th>Job Name</th>
+                        <th>Project Name</th>
+                        <th>Job Status </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for job in user.jobfinal_set.all %}
+                      <tr>
+                            <td>{{ job.job_name }}</td>
+                            <td>{{ job.project_name }}</td>
+                            <td>{{ job.job_status }}</td>
+                      </tr>
+                        {% endfor %}
+                    </tbody>
+                  </table>
+            <h5>Click  <a href="{% url 'JobSchd:user_details' user.id %}">here</a> to see Job Status and make changes</h5>
+        {% else %}
+            It seems that there are no job in your account yet,<a href="{% url 'JobSchd:jobform_final'%}">Click here</a> to Create new Job
+        {% endif %}
+        </ul>
+        {% endif %}
+    {% else %}
+        <h4>You are not Logged In, Please  <a href="{% url 'JobSchd:auth_login' %}"> Login </a> to see your Jobs</h4>
+    {% endif %}
+    </div>
+
+{% endcomment %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

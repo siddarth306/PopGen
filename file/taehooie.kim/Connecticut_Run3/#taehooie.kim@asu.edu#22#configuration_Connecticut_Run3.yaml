@@ -1,0 +1,109 @@
+project:
+    #To generate a synthetic population
+  synthesize: true
+  name: Connecticut_Run3
+    #File location
+  location: home/sumit/Desktop/Popgen-processing/ready/Connecticut_Run3
+    #Setup input data with given forms
+  inputs:
+    entities: [household, groupquarter, person]
+    housing_entities: [household, groupquarter]
+    person_entities: [person]
+    column_names:
+      hid: hid
+      pid: pid
+      geo: geo
+      region: region
+      sample_geo: sample_geo
+    location:
+      geo_corr_mapping:
+        geo_to_sample: geo_sample_mapping.csv
+        region_to_sample: region_sample_mapping.csv
+        region_to_geo: region_geo_mapping.csv
+      sample:
+        household: household_sample.csv
+        person: person_sample.csv
+        groupquarter: groupquarters_sample.csv
+      marginals:
+        geo:
+          household: household_marginals.csv
+          person: person_marginals.csv
+          groupquarter: groupquarters_marginals.csv
+        region:
+          household: region_household_marginals.csv
+          person: region_person_marginals.csv
+          groupquarter: region_groupquarters_marginals.csv
+    #Start to provide scenario
+  scenario:
+    #Brief description
+  - description: Connecticut TAZ Scenario
+    #If control variables are applied in multi-environment (geo and region), true
+    apply_region_controls: true
+    #Based on input setting, write down header name for each value
+    control_variables:
+      region:
+        household: [hhrtotals]
+        groupquarter: [gqrtotals]
+        person: [rpsex, rpage, rpworker, prtotals]
+      geo:
+        household: [hhtotals, hinc, hsize]
+        groupquarter: [gqtotals, gqtype]
+        person: [pworker, ptotals]
+    #Setting for IPF procedure, reweighting, and drawing household samples
+    parameters:
+      ipf:
+        tolerance: 0.0001
+        iterations: 1
+        zero_marginal_correction: 0.00001
+        rounding_procedure: bucket
+        archive_performance_frequency: 1
+    #Select either IPU or Entropy
+      reweighting:
+        procedure: ipu
+        tolerance: 0.0001
+        inner_iterations: 1
+        outer_iterations: 1000
+        archive_performance_frequency: 1
+      draws:
+        pvalue_tolerance: 0.9999
+        iterations: 1
+        seed: 0 
+
+    geos_to_synthesize:
+      region:
+         #Leave empty blank if we synthesize specific region, then use ID
+        ids: [1,2]
+        all_ids: true
+      geo:
+        ids: [1,2]
+        all_ids: true
+
+    outputs:
+      performance: [ipf, reweighting, drawing]
+      weights:
+        export: true
+        collate_across_geos: false
+      multiway:
+      - variables: [hsize, hinc]
+        filename: hhsize_income.csv
+        filetype: csv
+        entity: household
+      - variables: [rpsex, rpage]
+        filename: rpsex_rpage.csv
+        filetype: csv
+        entity: person
+
+      summary:
+        region:
+          filename: summary_region.csv
+          filetype: csv
+        geo:
+          filename: summary_geo.csv
+          filetype: csv
+      synthetic_population:
+        housing:
+          filename: housing_synthetic.csv
+          filetype: csv
+        person:
+          filename: person_synthetic.csv
+          filetype: csv

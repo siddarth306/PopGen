@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  {% load static %}
+  <title>PopGen</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  {% block layout %}
+    <link rel="stylesheet" href="{% static "JobSchd/css/material.min.css" %}" />
+    <link rel="stylesheet" href="{% static "JobSchd/css/material-components-web.min.css" %}" />
+    <style>
+
+      /* fallback */
+      @font-face {
+        font-family: 'Material Icons';
+        font-style: normal;
+        font-weight: 400;
+        src: url(https://fonts.gstatic.com/s/materialicons/v41/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2)
+        format('woff2');
+      }
+
+      .material-icons {
+        font-family: 'Material Icons';
+        font-weight: normal;
+        font-style: normal;
+        font-size: 24px;
+        line-height: 1;
+        letter-spacing: normal;
+        text-transform: none;
+        display: inline-block;
+        white-space: nowrap;
+        word-wrap: normal;
+        direction: ltr;
+        -webkit-font-feature-settings: 'liga';
+        -webkit-font-smoothing: antialiased;
+      }
+
+    </style>
+  {% endblock %}
+
+  {% block javascript %}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="{% static "JobSchd/js/material.min.js" %}"></script>
+    <script src="{% static "JobSchd/js/material-components-web.min.js" %}"></script>
+  {% endblock %}
+  
+</head>
+
+<body class="mdl-demo mdl-color--grey-100 mdl-color-text--grey-700 mdl-base">
+
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <!-- Title -->
+      <a class="mdl-layout-title" href="/" style="text-decoration:none;color:#fff">
+      <span class="mdl-layout-title">PopGen</span></a>
+      <!-- Add spacer, to align navigation to the right -->
+      <div class="mdl-layout-spacer"></div>
+        <!-- Navigation. We hide it in small screens. -->
+      <nav class="mdl-navigation mdl-layout--large-screen-only">
+        
+        {% if user.is_authenticated %}
+          
+          <button id="demo-menu-lower-right"
+                  class="mdl-button mdl-js-button mdl-button--icon">
+                    <i class="material-icons">account_circle</i>
+          </button>
+
+          <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu 
+                     mdl-js-ripple-effect" style="margin-left:-10px;"
+              for="demo-menu-lower-right">
+          
+            <li class="mdl-menu__item">
+              <a href="#" style="text-decoration: none;color:black;display:block">Settings</a>
+            </li>
+
+            <li class="mdl-menu__item">
+              <a href="{% url 'JobSchd:auth_logout' %}?next={% url 'JobSchd:auth_login' %}" i
+                 style="text-decoration:none;color:black;display:block">Logout
+              </a>
+            </li>
+
+          </ul>
+
+        {% else %}
+
+          <a href="{% url 'JobSchd:auth_login' %}" 
+             class="mdl-button mdl-js-button mdl-button--raised 
+                    mdl-js-ripple-effect mdl-button--accent">
+            <i class="material-icons md-16" style="padding-bottom:7px">lock</i>
+            <span>Login</span>
+          </a>
+
+        {% endif %}
+
+      </nav>
+    </div>
+  </header>
+
+
+  <main class="mdl-layout__content">
+    <div class="page-content">
+      {% block popgen-content %}
+      {% endblock %}
+    </div>
+  </main>
+</div>  
+
+
+</body>
+{% block footer %}
+{% endblock %}
+</html>

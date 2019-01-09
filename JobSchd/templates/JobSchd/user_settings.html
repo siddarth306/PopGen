@@ -1,0 +1,90 @@
+{% extends 'JobSchd/base.html' %}
+{% block title %}Log In{% endblock %}
+{% block login_active %}active{% endblock %}
+
+{% block popgen-content %}
+  <div class="mdl-card mdl-shadow--6dp" style="margin: 0 auto;margin-top:12%;">
+    <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+      <h2 class="mdl-card__title-text">User Account settings</h2>
+    </div>
+    <div class="mdl-card__supporting-text" style"float:right">
+      <form class="form-horizontal" role="form" method="POST" action="{% url 'JobSchd:auth_login' %}">
+        {% csrf_token %}
+        {% if error_message %}
+          <p><strong>{{ error_message }}</strong></p>
+        {% endif %}
+        
+        {% if form.errors %}
+          {% for field in form %}
+            {% for error in field.errors %}
+                <span class="mdl-textfield__error">{{ error|escape }}</span>
+            {% endfor %}
+          {% endfor %}  
+        {% endif %}
+        <label>Edit Email ID</label>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="text" id="id_email" name="email" value="{{user.email}}" />
+          <label class="mdl-textfield__label" for="id_email">Email ID</label>
+        </div>
+        <label>Edit Password</label>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="password" id="id_userpass" name="password" />
+          <label class="mdl-textfield__label" for="id_userpass">Password</label>
+        </div>
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+          <input class="mdl-textfield__input" type="password" id="id_userpass_conf" name="password_conf" />
+          <label class="mdl-textfield__label" for="id_userpass_conf">Confirm Password</label>
+        </div>
+    <div class="mdl-card__actions mdl-card--border">
+      <button type="submit" class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" style="float:left">Login</button>
+      <a href="{% url 'JobSchd:register' %}" class="mdl-button mdl-button--colored mdl-js-button
+      mdl-js-ripple-effect" style="float:right">Register</a>
+    </div>
+      </form>
+    </div>
+    
+
+  </div> {% comment %}
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-12 col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <h3>Log In</h3>
+                    
+                    <form class="form-horizontal" role="form" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_username">
+                                Username:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_username" maxlength="30" name="username" type="text">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-sm-2" for="id_password">
+                                Password:
+                            </label>
+                            <div class="col-sm-10">
+                                <input id="id_password" maxlength="30" name="password" type="password">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer">
+                    Don't have an account? <a href="{% url 'JobSchd:register' %}">Click here</a> to register.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>{% endcomment %}
+
+{% endblock %}
